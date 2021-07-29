@@ -11,7 +11,7 @@ class ICSGenerator
 
     public function __construct($events = null)
     {
-        if (!empty($events)) {
+        if (!empty($events)) { 
             $this->setEvents($events);
         }
     }
