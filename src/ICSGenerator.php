@@ -1,7 +1,7 @@
 <?php
 
 
-namespace common\util\ICS;
+namespace Kristianlentino\IcsUtil;
 
 
 class ICSGenerator
