@@ -257,7 +257,7 @@ class ICSEvent
 
 	private function checkRequiredProperties()
 	{
-		foreach (self::REQUIRED_PROPERTIES => $required_property) {
+		foreach (self::REQUIRED_PROPERTIES as $required_property) {
 
 			if(empty($this->$required_property))
 				return false;
