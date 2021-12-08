@@ -10,6 +10,21 @@ Use the package manager [composer](https://getcomposer.org/) to install the pack
 composer require kristianlentino/ics-util
 ```
 
+##ICSEvent properties
+
+Here is a short list of the available properties for a single event:
+
+| Property | Description
+| :---: | :---: |
+| description | Description of the event |
+| dateStart | Start date of the event |
+| dateEnd | End date of the event |
+| location | the place where the event will have place |
+| summary | Title of the event |
+| url | An url that will be displayed when opening the event on the calendar |
+| unique_id | Unique identifier of the event |
+
+
 ##Tests
 To run tests you need to install the vendor and the run the following command from the root of the library
 ```bash

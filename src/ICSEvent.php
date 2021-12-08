@@ -25,6 +25,7 @@ class ICSEvent
     private string $timeZone = "";
     private string $unique_id = "";
 
+
 	const MAP_ICS_PROPERTIES = [
 		'dateStart' => 'dtstart',
 		'dateEnd' => 'dtend',
@@ -259,8 +260,11 @@ class ICSEvent
 	{
 		foreach (self::REQUIRED_PROPERTIES as $required_property) {
 
-			if(empty($this->$required_property))
+			if(empty($this->$required_property)){
+
 				return false;
+			}
+
 
 		}
 

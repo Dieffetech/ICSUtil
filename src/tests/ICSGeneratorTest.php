@@ -17,7 +17,9 @@ class ICSGeneratorTest extends TestCase
 		$dateEnd = str_replace('+00:00', 'Z', gmdate('c', strtotime($dateEndEvent)));
 		$event = new ICSEvent([
 			'dateStart' => $dateStart,
-			'dateEnd' => $dateEnd
+			'dateEnd' => $dateEnd,
+			'summary' => "Oggetto dell'evento",
+			'description' => "Oggetto dell'evento",
 		]);
 		$generator = new ICSGenerator();
 		$this->assertTrue($generator->addEvent($event));
@@ -45,7 +47,8 @@ class ICSGeneratorTest extends TestCase
 		$dateEnd = str_replace('+00:00', 'Z', gmdate('c', strtotime($dateEndEvent)));
 		$event = new ICSEvent([
 			'dateStart' => $dateStart,
-			'dateEnd' => $dateEnd
+			'dateEnd' => $dateEnd,
+			'summary' => "Oggetto dell'evento"
 		]);
 		$dateStartEvent2 = date('Y-m-d',strtotime('-20 days'));
 		$dateEndEvent2 = date('Y-m-d',strtotime('+50 days'));
@@ -53,7 +56,9 @@ class ICSGeneratorTest extends TestCase
 		$dateEnd2 = str_replace('+00:00', 'Z', gmdate('c', strtotime($dateEndEvent2)));
 		$event2 = new ICSEvent([
 			'dateStart' => $dateStart,
-			'dateEnd' => $dateEnd
+			'dateEnd' => $dateEnd,
+			'summary' => "Oggetto dell'evento",
+			'description' => "Oggetto dell'evento",
 		]);
 		$generator = new ICSGenerator();
 		$generator->addEvent($event);
@@ -72,7 +77,8 @@ class ICSGeneratorTest extends TestCase
 		$dateEnd = str_replace('+00:00', 'Z', gmdate('c', strtotime($dateEndEvent)));
 		$event = new ICSEvent([
 			'dateStart' => $dateStart,
-			'dateEnd' => $dateEnd
+			'dateEnd' => $dateEnd,
+			'summary' => "Oggetto dell'evento"
 		]);
 		$dateStartEvent2 = date('Y-m-d',strtotime('-20 days'));
 		$dateEndEvent2 = date('Y-m-d',strtotime('+50 days'));
@@ -80,7 +86,9 @@ class ICSGeneratorTest extends TestCase
 		$dateEnd2 = str_replace('+00:00', 'Z', gmdate('c', strtotime($dateEndEvent2)));
 		$event2 = new ICSEvent([
 			'dateStart' => $dateStart2,
-			'dateEnd' => $dateEnd2
+			'dateEnd' => $dateEnd2,
+			'summary' => "Oggetto dell'evento",
+			'description' => "Oggetto dell'evento",
 		]);
 
 		$array = [
@@ -104,7 +112,9 @@ class ICSGeneratorTest extends TestCase
 		$dateEnd = str_replace('+00:00', 'Z', gmdate('c', strtotime($dateEndEvent)));
 		$event = new ICSEvent([
 			'dateStart' => $dateStart,
-			'dateEnd' => $dateEnd
+			'dateEnd' => $dateEnd,
+			'summary' => "Oggetto dell'evento",
+			'description' => "Oggetto dell'evento",
 		]);
 		$dateStartEvent2 = date('Y-m-d',strtotime('-20 days'));
 		$dateEndEvent2 = date('Y-m-d',strtotime('+50 days'));
@@ -112,7 +122,9 @@ class ICSGeneratorTest extends TestCase
 		$dateEnd2 = str_replace('+00:00', 'Z', gmdate('c', strtotime($dateEndEvent2)));
 		$event2 = new ICSEvent([
 			'dateStart' => $dateStart2,
-			'dateEnd' => $dateEnd2
+			'dateEnd' => $dateEnd2,
+			'summary' => "Oggetto dell'evento",
+			'description' => "Oggetto dell'evento",
 		]);
 
 		$array = [
@@ -138,7 +150,8 @@ class ICSGeneratorTest extends TestCase
 			'dateEnd' => $dateEnd,
 			'description' => 'Prova ICS',
 			'location' => 'Codogno',
-			'url' => 'https://kristianlentino.it'
+			'url' => 'https://kristianlentino.it',
+			'summary' => "Oggetto dell'evento"
 		]);
 
 		$array = [
@@ -160,7 +173,8 @@ class ICSGeneratorTest extends TestCase
 		$event = new ICSEvent([
 			'dateStart' => $dateStart,
 			'dateEnd' => $dateEnd,
-			'description' => 'Prova ICS'
+			'description' => 'Prova ICS',
+			'summary' => "Oggetto dell'evento"
 		]);
 
 		$array = [
