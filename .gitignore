@@ -1,2 +1,4 @@
 .idea/*
 /vendor
+/src/tests/ics_files/*
+/composer.lock

@@ -9,15 +9,47 @@ class ICSEvent
 {
 
     const DT_FORMAT = 'Ymd\THis';
+	const REQUIRED_PROPERTIES = [
+		'dateStart',
+		'dateEnd',
+		'description',
+	];
 
-    private $description = "";
-    private $dateStart = "";
-    private $dateEnd = "";
-    private $dateStamp = "";
-    private $location = "";
-    private $summary = "";
-    private $url = "";
-    private $timeZone = "";
+	private string $description = "";
+    private string $dateStart;
+    private string $dateEnd;
+    private string $dateStamp = "";
+    private string $location = "";
+    private string $summary = "";
+    private string $url = "";
+    private string $timeZone = "";
+    private string $unique_id = "";
+
+	const MAP_ICS_PROPERTIES = [
+		'dateStart' => 'dtstart',
+		'dateEnd' => 'dtend',
+		'description' => 'description',
+		'location' => 'location',
+		'summary' => 'summary',
+		'url' => 'url',
+	];
+
+	public function __construct(
+		array $properties = []
+	)
+	{
+
+		if(empty($properties))
+			throw new \Exception("You need to initialize the class with at least the start date , end date and the description ");
+
+		foreach ($properties as $propertyName => $property) {
+
+			$setterFunctionName = "set".ucfirst($propertyName);
+			$this->$setterFunctionName($property);
+		}
+
+		$this->unique_id = uniqid("",true);
+	}
 
     /**
      * @return string
@@ -147,83 +179,91 @@ class ICSEvent
         $this->timeZone = $timeZone;
     }
 
-    public function __construct(
-    	$description = "",
-		$dateStart = "",
-		$dateEnd = "",
-		$dateStamp = "",
-		$location = "",
-		$summary = "",
-		$url = "",
-		$timeZone = ""
-	)
-    {
-        if(!empty($description)) $this->setDescription($description);
-        if(!empty($dateStart)) $this->setDateStart($dateStart);
-        if(!empty($dateEnd)) $this->setDateEnd($dateEnd);
-        if(!empty($dateStamp)) $this->setDateStamp($dateStamp);
-        if(!empty($location)) $this->setLocation($location);
-        if(!empty($summary)) $this->setSummary($summary);
-        if(!empty($url)) $this->setUrl($url);
-        if(!empty($timeZone)) $this->setTimeZone($timeZone);
-    }
+
 
     public function getEvent() :string
     {
-        $event_string = "";
+		// Build ICS properties - add header
+		$ics_props = array(
+			"BEGIN:VEVENT"
+		);
 
-        // add header
-        $event_string .= "BEGIN:VEVENT\r\n";
 
-        // Set some default values
-        $event_string .= "UID:" . uniqid() . "\r\n";
+		$hasCompiledRequiredProperties = $this->checkRequiredProperties();
 
-        if(!empty($this->getDateStamp())) {
-            $event_string .= "DTSTAMP;" . $this->format_timestamp($this->getDateStamp()) . "\r\n";
-        }
-        else {
-            $event_string .= "DTSTAMP;" . $this->format_timestamp('now') . "\r\n";
-        }
+		if(!$hasCompiledRequiredProperties){
+			throw new \Exception("You should set at least the following attributes: ".implode(',',self::REQUIRED_PROPERTIES));
+		}
 
-        if(!empty($this->getDateStart())) {
-            $event_string .= "DTEND;" . $this->format_timestamp($this->getDateStart()) . "\r\n";
-        }
+		// Build ICS properties - add header
+		$props = array();
+		foreach($this::MAP_ICS_PROPERTIES as $classAttribute => $icsPropertyName) {
+			$value = $this->sanitize_val($this->$classAttribute,$icsPropertyName);
+			$props[strtoupper($icsPropertyName . ($icsPropertyName === 'url' ? ';VALUE=URI' : ''))] = $value;
+		}
 
-        if(!empty($this->getDateEnd())) {
-            $event_string .= "DTSTART;" . $this->format_timestamp($this->getDateEnd()) . "\r\n";
-        }
+		// Set some default values
+		$props['DTSTAMP'] = $this->format_timestamp('now');
+		$props['UID'] = $this->unique_id;
 
-        if(!empty($this->getDescription())) {
-            $event_string .= "DESCRIPTION:" . $this->escape_string($this->getDescription()) . "\r\n";
-        }
-        if(!empty($this->getLocation())) {
-            $event_string .= "LOCATION:" . $this->escape_string($this->getLocation()) . "\r\n";
-        }
-        if(!empty($this->getSummary())) {
-            $event_string .= "SUMMARY:" . $this->escape_string($this->getSummary()) . "\r\n";
-        }
-        if(!empty($this->getUrl())) {
-            $event_string .= "URL:" . $this->escape_string($this->getUrl()) . "\r\n";
-        }
+		// Append properties
+		foreach ($props as $k => $v) {
+			$ics_props[] = "$k:$v";
+		}
 
-        // add footer
-        $event_string .= "END:VEVENT\r\n";
+		// Build ICS properties - add footer
+		$ics_props[] = "END:VEVENT\r\n";
 
-        return $event_string;
+		return implode("\r\n",$ics_props);
     }
 
-    private function format_timestamp($timestamp) {
-        $dt = new DateTime($timestamp);
 
-        if (!empty($this->getTimeZone())) {
-            return "TZID=\"" . $this->getTimeZone() . "\":" . $dt->format(self::DT_FORMAT);
-        }
-        else {
-            return $dt->format(self::DT_FORMAT);
-        }
-    }
+	private function sanitize_val($val, $key = false) {
+		switch($key) {
+			case 'dtend':
+			case 'dtstamp':
+			case 'dtstart':
+				$val = $this->format_timestamp($val);
+				break;
+			default:
+				$val = $this->escape_string($val);
+		}
+
+		return $val;
+	}
+	private function format_timestamp($timestamp) {
+		$dt = new \DateTime($timestamp);
+		return $dt->format(self::DT_FORMAT);
+	}
 
     private function escape_string($str) {
         return preg_replace('/([\,;])/','\\\$1', $str);
     }
+	/**
+	 * @return string
+	 */
+	public function getUniqueId(): string
+	{
+		return $this->unique_id;
+	}
+
+	/**
+	 * @param string $unique_id
+	 */
+	public function setUniqueId(string $unique_id): void
+	{
+		$this->unique_id = $unique_id;
+	}
+
+	private function checkRequiredProperties()
+	{
+		foreach (self::REQUIRED_PROPERTIES => $required_property) {
+
+			if(empty($this->$required_property))
+				return false;
+
+		}
+
+		return true;
+	}
 }
